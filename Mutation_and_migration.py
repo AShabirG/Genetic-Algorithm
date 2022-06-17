@@ -85,7 +85,7 @@ iterations_to_solve = []
 while n < 90:
     optimal = False
     generate_R()  # Generate noise in landscape
-    demes = np.random.randint(2, size=(20, 2 * n, 20))  # Initialise 20 demes each containing 20 genotypes of length 2n
+    demes = np.random.randint(2, size=(20, 20, 2 * n))  # Initialise 20 demes each containing 20 genotypes of length 2n
     iterations = 0
 
     while not optimal:
@@ -128,8 +128,10 @@ while n < 90:
             for i in range(2, 20):  # number of blank rows
                 # Fitness proportionate selection of remainder of genotypes
                 k = fitnesses[l][-1] * np.random.rand()
-                where_it_lies = bisect.bisect_left(fitnesses[l], k)
-                new_gen[l][i] = mutation(np.copy(demes[l][where_it_lies]), n)
+                m = fitnesses[l][-1] * np.random.rand()
+                parent_1 = bisect.bisect_left(fitnesses[l], k)
+                parent_2 = bisect.bisect_left(fitnesses[l], m)
+                new_gen[l][i] = mutation(crossover(np.copy(demes[l][parent_1]), np.copy(demes[l][parent_2])), n)
 
         # Check if maximum fitness is in the population
         optimal = fitness_check(new_gen, n)
